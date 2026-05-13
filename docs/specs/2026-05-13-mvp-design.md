@@ -62,37 +62,61 @@
 
 ---
 
-## 4. 차별화 6축
+## 4. 차별화 축
 
 | | 차별화 축 | 설명 | 무게 |
 |---|---|---|---|
-| ⭐0 | **Founder's Transparency** | Founder 부부 익명+실데이터 timeline 공개 (실비용, 실차수 결정, 실감정 일기). 한국 부재 angle. 콘텐츠 마케팅·SEO·신뢰 자산 자동 | 메인 |
-| 1 | Couple-first (Child-longing 정서로 변환) | 페어 모드 (배우자 페어 계정, 공유 일기, 알림 분담). 단, 정서 톤은 "부부 둘이서"가 아니라 **"아이를 함께 기다리는 둘"**. couple은 means, child-longing이 end | 보조 |
-| 2 | Effortless 기록 | 진료기록·영수증 OCR 자동 파싱, 카톡 알림 → 자동 입력. 입력 피로 제거 | 보조 |
-| 3 | Personalized AI | 본인 데이터·맥락 누적 → AI 코치가 사이클별 맞춤 응답 | 보조 |
-| 4 | Trust/Safe | 익명 founder transparency가 곧 trust 자산. 별도 검증 없이 자동 충족 | 자동 |
-| 5 | 한국 100% 특화 | 한국 의료수가, 정부 난임시술 지원금, 보험 청구 항목, 휴가·휴직 제도 | 보조 |
+| ⭐0 | **Active Inquiry AI 동반자** | 사용자에게 적극 질문을 던지는 AI. 일상(영양·습관) · 시술 의사결정 · 멘탈 · 부부 갈등 · 비용 회의 — 4-5 영역을 깊게 cover. 한국 IVF 컨텍스트·의료법 가드 적용. founder 부부 본인+아내의 질문·답변 패턴이 system prompt base. 본인 데이터 누적 → personalized | **메인** |
+| ⭐0a | **Founder's Transparency** | Founder 부부 익명+실데이터 timeline 공개. 한국 부재 angle. 콘텐츠 마케팅·SEO·신뢰 자산 자동. AI 동반자의 raw material도 됨 | 메인 보조 |
+| 1 | Couple-first (Child-longing 정서) | 페어 모드. 정서 톤 = "부부 둘이서"가 아니라 **"아이를 함께 기다리는 둘"**. couple은 means, child-longing이 end | 보조 |
+| 2 | Trust/Safe | 익명 founder transparency + K1 의료법 톤 가이드 strict 적용 = trust 자산 자동 | 자동 |
+| 3 | 한국 100% 특화 | 한국 IVF 의료수가·정부지원금·보험·휴가 제도·도메인 용어. AI 코치 system prompt에 한국 컨텍스트 깊게 | 보조 |
+| 4 | Effortless 기록 | OCR·카톡 자동 입력으로 AI 코치 input 부담 줄이기 (M3+ 적용) | 보조 |
 
-**메인 차별화 한 줄**: "카더라 vs 진짜 한 부부의 실비용·실결정·실감정 — 아이를 함께 기다리는 동행"
+**메인 차별화 한 줄**: "카더라 천국·3분 진료·범용 GPT 사이에서, 한국 IVF 컨텍스트·본인 부부 데이터·의료법 가드를 다 갖춘 **단 한 명의 AI 동반자**."
 
 ---
 
-## 5. MVP Scope (3-4개월 빌드)
+## 5. MVP Scope (4-5개월 빌드)
 
 ### 핵심 3 wedges
 
 | Wedge | 기능 | 풀어주는 페인 | 차별화 축 |
 |---|---|---|---|
-| **W1** | Founder's Diary + 앱 통합 | 정보 카더라, Trust | ⭐0, 4 |
-| **W2** | IVF 주사·일정·약 트래커 + 페어 알림 + OCR 자동 파싱 | 매일 주사·일정 관리 + 부부 책임 분담 | 1, 2 |
-| **W3** | 한국 의료비·정부지원금·보험청구 계산기 | 회차당 수백만원 비용 관리 | 5 |
+| **W1** | Founder's Diary + 앱 통합 | 정보 카더라, Trust + AI 동반자 raw material | ⭐0a, 2 |
+| **W2** ⭐ | **AI 동반자 (active inquiry chat)** + 일상 do/don't 라이브러리 (RAG knowledge base) | 일상·시술·멘탈·부부·비용 4-5 영역 일상 결정·고민 sounding | ⭐0, 1, 3 |
+| **W3** | **의사결정 sounding board** — "이게 하는게 맞나?" / "안되면 어떡하지?" 시뮬레이션 + 확률·비용 ROI 안내 | 시술 차수 결정, 휴식·중단 결정, 실패 대응 | ⭐0, 3 |
 
-### MVP에 포함하지 않는 것 (Phase 2 이후로 미룸)
-- 차수 의사결정 시뮬레이터 (의료법 부담)
-- 익명 매칭 커뮤니티 (cold start 리스크)
-- AI 멘탈 코치 챗 (장기 retention용이지 출시 wedge 아님)
-- 외부 의사·전문가 매칭
-- iOS/Android 네이티브 앱 (PWA로 시작)
+W2가 메인 무게. W1은 trust + raw material. W3는 W2의 specific sub-mode (의사결정 영역 깊게).
+
+### MVP에 포함하지 않는 것 (M3+ 이후로 미룸)
+- **IVF 사이클·주사·일정 트래커** (기존 W2) → M3
+- **한국 의료비·지원금·보험 계산기** (기존 W3) → M5 (정확도 어렵고, 남성난임 미지원 케이스 많음)
+- **진료기록·영수증 OCR 자동 입력** → M7
+- **카톡 채널 알림** → M3+
+- 차수 의사결정 시뮬레이터 (전체) → M-?
+- 익명 매칭 커뮤니티 → Phase 2
+- 외부 의사·전문가 매칭 → Phase 2
+- iOS/Android 네이티브 앱 → Phase 2 (PWA로 시작)
+
+---
+
+## 5a. AI Companion Design Principles (W2 메인)
+
+W2의 핵심이라 별도 명시. M6 (AI coach milestone)에서 본격 빌드.
+
+| 원칙 | 설명 |
+|---|---|
+| **Active inquiry** | 사용자 막연한 입력 → AI가 더 구체적 follow-up 질문. 일방향 답변 X, 양방향 sounding |
+| **4-5 영역 cover** | 일상 (영양·습관·운동·수면) · 시술 의사결정 · 멘탈 · 부부 갈등 · 비용·의지. 한 곳에서 다 |
+| **한국 IVF 컨텍스트** | PGT-A·AMH·OHSS·정부지원금·남성난임 지원 한도·휴직 제도 등 도메인 깊이 |
+| **의료법 가드 (K1)** | `docs/knowledge/medical_law_tone_guide.md` strict 적용. 진단·시술·약 직접 추천 X. 정보 정리·sounding·본인 사례 공유 O. BETA 면책 박스 |
+| **Personal context** | 본인 부부 데이터 (사이클·약·감정 기록) 누적 → AI가 맥락 알고 답변 |
+| **Founder pattern learning** | founder 본인+아내의 실제 질문·답변 패턴이 system prompt base. founder Diary가 콘텐츠뿐 아니라 AI 코치 calibration 자료 |
+| **Pair mode** | 부부 모두에게 보이는 conversation vs 한쪽만의 private — 구분 |
+| **Trust 자산 연결** | "Founder도 같이 묻고 헤맴" = AI 답변에 founder 사례 인용 가능 (1차 자기 정보) |
+
+이 원칙들이 W2 implementation의 backbone. M6 시점 detail spec.
 
 ---
 
@@ -101,8 +125,8 @@
 | Phase | 기간 | 목표 | 결과물 |
 |---|---|---|---|
 | **Phase 0** | 즉시 시작 (4-8주) | 시드 audience 확보 | Founder Diary 인스타·블로그 채널 오픈, founder 부부 IVF timeline 공개 시작, 베타 대기명단 수집 |
-| **Phase 1** | 3-4개월 | MVP 출시 | W1+W2+W3 통합 앱 출시, 베타 대기명단 → 첫 paying user conversion |
-| **Phase 2** | 6-12개월 이후 | 통합 동반자 확장 | 차수 시뮬레이터, 익명 매칭, 멘탈 코치, sub-페르소나 확장 (IUI/자연시도자/임신 후) |
+| **Phase 1** | 4-5개월 | MVP 출시 | W1(Diary) + W2(AI 동반자) + W3(의사결정 sounding) 출시. 베타 대기명단 → 첫 paying user. **W2 AI 코치가 핵심 무게** |
+| **Phase 2** | 6-12개월 이후 | 통합 동반자 확장 | IVF 트래커(M3) · 카톡 알림(M3) · 의료비 계산기(M5) · OCR(M7) · 익명 매칭 · sub-페르소나 확장 (IUI/자연시도자/임신 후) |
 
 Phase 0과 Phase 1은 병렬 진행 (콘텐츠 = founder 부부 실시간 timeline, 앱 빌드 = 별도 트랙).
 
@@ -114,8 +138,8 @@ Phase 0과 Phase 1은 병렬 진행 (콘텐츠 = founder 부부 실시간 timeli
 
 | Tier | 가격 | 기능 |
 |---|---|---|
-| Free | 0원 | Founder Diary 일부 + 트래커 기본 + 비용 계산기 lite |
-| **Paid (페어)** | **월 3-5만원** | 페어 모드 full / AI 코치 무제한 / OCR 자동 기록 / 한국 의료·지원금 자동 매칭 / 차수 시뮬 (Phase 2) |
+| Free | 0원 | Founder Diary 일부 + AI 동반자 일일 N회 limit + 의사결정 sounding lite |
+| **Paid (페어)** | **월 3-5만원** | 페어 모드 full / AI 동반자 무제한 + 4-5 영역 full mode / 의사결정 sounding full / 페어 conversation / 본인 데이터 누적 personalization / IVF 트래커·계산기·OCR (M3+ 시점) |
 
 ### Unit Economics
 - **ARPU**: 페어 월 3-5만원
@@ -235,12 +259,14 @@ founder_posts   -- Founder Diary, user 데이터와 별도
 
 ## 13. Open Questions (Implementation Plan 단계 결정)
 
-1. **PWA vs Native**: Phase 1 PWA로 시작 OK인지, 카톡 알림과 호환성 확인 필요
-2. **OCR 정확도**: GPT-4V로 한국 영수증·진료기록 파싱 PoC 필요 (정확도 미달 시 대안)
-3. **카톡 채널 알림**: 비즈니스 채널 가입·승인 절차, 메시지 단가 검토
-4. **Founder Diary 콘텐츠 시스템**: Notion CMS vs 자체 Markdown 정적 vs Sanity vs Hashnode 등 선택
-5. **법무 자문**: 의료법 회색지대 톤 검토 (필요 시 의료 자문 변호사 상담)
-6. **본인 부부 사이클 추적 시작 시점**: 다음 사이클 시작 시점 = Phase 0 콘텐츠 시작 타이밍 결정
+1. **AI 모델 선택**: Claude (Sonnet/Opus) vs GPT-4o — 한국어 IVF 도메인·active inquiry pattern·의료법 가드 성능 측정 필요
+2. **AI Companion system prompt 구조**: 4-5 영역별 분리 vs 단일 통합 + 모드 switch. founder 부부 raw material 어떻게 prompt에 embed
+3. **RAG knowledge base 구성**: hosto K2 자료(한국 의료시스템) + 추가 IVF 자료(대한생식의학회·ASRM·ESHRE) — 어디까지 수집·검증 후 RAG?
+4. **PWA vs Native**: Phase 1 PWA로 시작 OK인지 (M3 카톡 알림 추가 시 재검토)
+5. **Founder Diary 콘텐츠 시스템**: Notion CMS vs 자체 Markdown 정적 vs Sanity 등 선택 — AI 코치 raw material 추출 가능성도 고려
+6. **법무 자문**: 의료법 회색지대 톤 검토 (특히 AI 코치 출력 — 의료기록/진단으로 비치는 위험 회피)
+7. **본인 부부 사이클 추적 시작 시점**: 다음 사이클 시작 시점 = Phase 0 콘텐츠 + AI 코치 raw material 수집 타이밍
+8. **AI 코치 fail-safe**: 의료법 가드 회피 못 하는 user 입력 시 (예: "이 약 먹어도 돼?") 명시적 "의사 상담 권장" + 본 AI는 답변 안 함 패턴 design
 
 ---
 
