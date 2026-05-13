@@ -73,7 +73,6 @@ pum/
 │   │   ├── queries.ts
 │   │   ├── mutations.ts
 │   │   └── invite-token.ts
-│   └── env.ts
 ├── supabase/
 │   ├── config.toml
 │   └── migrations/
@@ -209,7 +208,7 @@ git commit -m "chore: bootstrap pum Next.js 15 app with Tailwind and shadcn/ui"
 
 **Files:**
 - Create via CLI: `supabase/config.toml`, `supabase/migrations/`, `supabase/seed.sql`
-- Create: `lib/supabase/client.ts`, `lib/supabase/server.ts`, `lib/supabase/middleware.ts`, `middleware.ts`, `lib/env.ts`, `.env.example`, `.env.local`
+- Create: `lib/supabase/client.ts`, `lib/supabase/server.ts`, `lib/supabase/middleware.ts`, `middleware.ts`, `.env.example`, `.env.local`
 
 - [ ] **Step 1: Install Supabase CLI (skip if installed)**
 
@@ -264,23 +263,9 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 Verify `.gitignore` contains `.env*.local` (Next.js default does).
 
-- [ ] **Step 7: Create `lib/env.ts`**
+- [ ] **Step 7: (Removed) Typed env accessor**
 
-```ts
-// lib/env.ts
-function required(name: string): string {
-  const v = process.env[name];
-  if (!v) throw new Error(`Missing env var: ${name}`);
-  return v;
-}
-
-export const env = {
-  SUPABASE_URL: required("NEXT_PUBLIC_SUPABASE_URL"),
-  SUPABASE_ANON_KEY: required("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-  SUPABASE_SERVICE_ROLE_KEY: required("SUPABASE_SERVICE_ROLE_KEY"),
-  SITE_URL: required("NEXT_PUBLIC_SITE_URL"),
-};
-```
+Decision: skip the typed `lib/env.ts` helper for M1. The `process.env.*!` non-null-assertion pattern in `lib/supabase/*.ts` is sufficient at this scale. If runtime validation becomes important later, add it as a separate startup guard in `middleware.ts` or a dedicated module.
 
 - [ ] **Step 8: Create `lib/supabase/client.ts`**
 
@@ -383,7 +368,12 @@ export async function updateSession(request: NextRequest) {
 }
 ```
 
-- [ ] **Step 11: Create root `middleware.ts`**
+- [ ] **Step 11: Create root middleware/proxy file**
+
+**Next.js 15**: filename is `middleware.ts`, exported function is `middleware`.
+**Next.js 16+**: convention renamed to `proxy.ts`, exported function is `proxy` (the `middleware` name still works but emits a deprecation warning).
+
+If you installed Next.js 15.x, use `middleware.ts`:
 
 ```ts
 // middleware.ts
@@ -400,6 +390,26 @@ export const config = {
   ],
 };
 ```
+
+If you installed Next.js 16+, use `proxy.ts`:
+
+```ts
+// proxy.ts
+import { type NextRequest } from "next/server";
+import { updateSession } from "@/lib/supabase/middleware";
+
+export async function proxy(request: NextRequest) {
+  return await updateSession(request);
+}
+
+export const config = {
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
+};
+```
+
+The helper module at `lib/supabase/middleware.ts` keeps its name in both versions (it's an internal helper, not the Next.js convention file).
 
 - [ ] **Step 12: Verify and commit**
 
