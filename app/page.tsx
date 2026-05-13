@@ -9,12 +9,12 @@ export default function Home() {
         아이를 함께 기다리는 부부의 IVF 동반자.
       </p>
       <div className="flex gap-3">
-        <Link href="/signup">
-          <Button>시작하기</Button>
-        </Link>
-        <Link href="/login">
-          <Button variant="outline">로그인</Button>
-        </Link>
+        <Button asChild>
+          <Link href="/signup">시작하기</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/login">로그인</Link>
+        </Button>
       </div>
     </main>
   );
