@@ -40,3 +40,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+.idea/
+
+# test artifacts
+test-results/
+
+# Claude local settings (personal)
+.claude/settings.local.json

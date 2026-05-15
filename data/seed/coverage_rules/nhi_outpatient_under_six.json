@@ -1,0 +1,141 @@
+{
+  "name": "nhi_outpatient_under_six",
+  "version": "2026.05.11-01",
+  "description": "건강보험 외래 만 1세 이상 6세 미만 영유아 본인부담률 결정표. 일반률의 70% 적용 — 종별 × 70% 결과를 미리 계산해 박는다 (의원 21%, 병원 28%/24.5%, 종합 35%/31.5%, 상급종합 42%, 보건기관 21%, 약국 21%). 일반 결정표(>=6세)와 1세 미만 결정표 사이의 띠.",
+  "source": {
+    "legal_basis": "HIRA 외래 본인부담률 (만 6세 미만 일반률의 70%) 고시",
+    "source_url": "https://www.hira.or.kr/co/dummy.do?pgmid=HIRAA030056020110",
+    "verification_status": "unverified",
+    "verified_at": null,
+    "verified_by": null,
+    "effective_from": "2026-01-01",
+    "effective_to": null,
+    "_verification_note": "각 본인부담률은 일반률 × 0.70 결과로 미리 계산. 일반률이 법령 개정으로 바뀌면 이 표도 동시 갱신 필요 — 향후 결정표 검수 워크플로우에서 자동 검증 박을 것."
+  },
+  "applicability": {
+    "predicates": [
+      "is_nhi_insured",
+      "is_outpatient",
+      "is_infant_one_to_five",
+      "has_no_special_program"
+    ]
+  },
+  "rules": [
+    {
+      "id": "INFANT-U6-CLINIC",
+      "description": "1~5세 외래 — 의원 21% (= 일반 30% × 70%)",
+      "conditions": {
+        "institution_type": "의원",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.21,
+        "applied_program": "건강보험_6세미만",
+        "priority_group": "infant_rate"
+      }
+    },
+    {
+      "id": "INFANT-U6-HOSPITAL-DONG",
+      "description": "1~5세 외래 — 병원 동지역 28% (= 일반 40% × 70%)",
+      "conditions": {
+        "institution_type": "병원",
+        "institution_region": "동",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.28,
+        "applied_program": "건강보험_6세미만",
+        "priority_group": "infant_rate"
+      }
+    },
+    {
+      "id": "INFANT-U6-HOSPITAL-EUPMYEON",
+      "description": "1~5세 외래 — 병원 읍면 24.5% (= 일반 35% × 70%)",
+      "conditions": {
+        "institution_type": "병원",
+        "institution_region": "읍면",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.245,
+        "applied_program": "건강보험_6세미만",
+        "priority_group": "infant_rate"
+      }
+    },
+    {
+      "id": "INFANT-U6-GENERAL-DONG",
+      "description": "1~5세 외래 — 종합병원 동지역 35% (= 일반 50% × 70%)",
+      "conditions": {
+        "institution_type": "종합병원",
+        "institution_region": "동",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.35,
+        "applied_program": "건강보험_6세미만",
+        "priority_group": "infant_rate"
+      }
+    },
+    {
+      "id": "INFANT-U6-GENERAL-EUPMYEON",
+      "description": "1~5세 외래 — 종합병원 읍면 31.5% (= 일반 45% × 70%)",
+      "conditions": {
+        "institution_type": "종합병원",
+        "institution_region": "읍면",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.315,
+        "applied_program": "건강보험_6세미만",
+        "priority_group": "infant_rate"
+      }
+    },
+    {
+      "id": "INFANT-U6-TERTIARY",
+      "description": "1~5세 외래 — 상급종합병원 42% (= 일반 60% × 70%)",
+      "conditions": {
+        "institution_type": "상급종합병원",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.42,
+        "applied_program": "건강보험_6세미만",
+        "priority_group": "infant_rate"
+      }
+    },
+    {
+      "id": "INFANT-U6-PHARMACY",
+      "description": "1~5세 외래 — 약국 21% (= 일반 30% × 70%)",
+      "conditions": {
+        "institution_type": "약국",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.21,
+        "applied_program": "건강보험_6세미만",
+        "priority_group": "infant_rate"
+      }
+    },
+    {
+      "id": "INFANT-U6-PUBLIC_HEALTH",
+      "description": "1~5세 외래 — 보건기관 21% (= 일반 30% × 70%)",
+      "conditions": {
+        "institution_type": "보건기관",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.21,
+        "applied_program": "건강보험_6세미만",
+        "priority_group": "infant_rate"
+      }
+    }
+  ]
+}

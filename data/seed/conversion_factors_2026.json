@@ -1,0 +1,16 @@
+{
+  "_source": "NHIS 연도별 환산지수 결정 현황 (https://www.nhis.or.kr/announce/wbhaec11413m01.do)",
+  "_year": 2026,
+  "_unit": "원/점",
+  "_note": "수가 = 상대가치점수 × 환산지수. 종별로 환산지수가 다르며 매년 NHIS 공시로 결정된다.",
+  "_effective_from": "2026-01-01",
+  "factors": [
+    {"institution_type": "의원", "value": 95.6},
+    {"institution_type": "병원", "value": 83.8},
+    {"institution_type": "치과", "value": 101.1},
+    {"institution_type": "한방", "value": 104.3},
+    {"institution_type": "약국", "value": 105.5},
+    {"institution_type": "보건기관", "value": 98.6},
+    {"institution_type": "조산원", "value": 185.1}
+  ]
+}

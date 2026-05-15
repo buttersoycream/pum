@@ -44,7 +44,17 @@ user 질문: "단기간 실제로 돈이 될 만한 프로젝트?" → teum 5개
 
 ### 시장
 - 한국 IVF 시도 5-8만쌍/년 (회당 300-800만원 결제 의향 ⭐⭐⭐⭐⭐)
-- founder 부부 = 1차 페르소나 + raw material
+- founder 부부 = **긍정 outlier** (community 대비 멘탈·갈등 패턴 약함). raw material은 별도 angle (Founder Diary trust 자산)
+
+### Sub-페르소나 (community archive 분석, K7 sub_personas.md)
+| ID | 핵심 | Stage | Guard 위험 |
+|---|---|---|---|
+| **P1** | 33세 초기 진단 직후 (아내) | pre-IVF | 낮음 |
+| **P2** | 36세 반복 실패 번아웃 (아내) | 3차 후 | ⚠️ **높음** (자해 사고) |
+| **P3** | 38세 남편 정자 이슈 + 경제 압박 | 남성난임 | 중간 (catastrophic) |
+| **P4** | 32세 자연시도 1년 정보 과부하 | pre-IVF | 낮음 |
+
+→ system prompt few-shot 메인 source. founder 본인 raw (type B)는 별도 수령 후 보조.
 
 ### 8 페인 (user dump, 2026-05-13)
 1. 일상 do/don't (영양·습관·운동)
@@ -234,6 +244,9 @@ user 질문: "단기간 실제로 돈이 될 만한 프로젝트?" → teum 5개
 - OCR 정확도 (한국 영수증·진료기록 — 미측정)
 - 카톡 비즈니스 채널 가입·승인 (M3)
 
+### UX (M1.5 보강 후보)
+- **페어 수락 흐름 혼동** (2026-05-15 손 테스트 발견): 받는 쪽 dashboard에 "배우자 초대하기" 버튼이 보여 받는 사람이 자기 couple을 또 만들어버림 → 둘 다 "이미 페어" 상태로 연결 안 됨. 실제 베타 사용자도 동일 실수 예상. 고칠 옵션: (A) 초대 버튼 옆 "이미 링크 받았으면 링크를 여세요" 안내, (B) 초대 링크 → 미로그인 시 로그인/가입 후 자동 수락 화면, (C) 둘 다. user 결정 대기.
+
 ### 비즈니스
 - CAC 검증 — Phase 0 콘텐츠 → 무료 conversion 효과 측정 필요
 - Paid conversion — 월 5만원 가격 검증 필요
@@ -243,7 +256,8 @@ user 질문: "단기간 실제로 돈이 될 만한 프로젝트?" → teum 5개
 ### 의료·정서
 - founder 부부 실데이터 공개 부담 (privacy fatigue 가능)
 - founder 부부 사이클 결과 실패 시 product 정서 변화 어떻게 다룰지
-- 사용자 멘탈 risk (앱이 우울증 유발 가능성) — K1 톤 가이드로 일부 가드되나 모니터링 필요
+- 사용자 멘탈 risk (앱이 우울증 유발 가능성) — K1 톤 가이드 + K5 §7 P2 정신건강 응급 escalation 가드. 베타 모니터링 필수
+- **founder = 긍정 outlier 통찰** (2026-05-14): founder 본인 raw에 over-fit 시 product가 typical 부부에게 distance. system prompt few-shot 메인 source = K7 4 페르소나 (community archive). founder는 Founder Diary 별도 angle (긍정 outlier도 IVF 결정·비용·정보 마주한다의 contrast trust 자산)
 
 ---
 
@@ -252,12 +266,39 @@ user 질문: "단기간 실제로 돈이 될 만한 프로젝트?" → teum 5개
 ### 제품 정의
 - **Spec doc (v2)**: `docs/specs/2026-05-13-mvp-design.md`
 - **M1 plan (완료)**: `docs/plans/2026-05-13-m1-repo-auth-couple.md`
-- **M2 plan**: 미작성
+- **M2 plan v1 (skeleton)**: `docs/plans/2026-05-14-m2-ai-companion-skeleton.md` — 12 task overview + DB schema + 8 E2E 시나리오
+- **M2 plan v1.5 (foundation, API key 불필요)**: `docs/plans/2026-05-14-m2-v1.5-foundation.md` — Task 1·2·4·5·6b·6c step-by-step (DB·Safety UI·System prompt code·Guards·Persona router·Mental health emergency). 즉시 implementation 진입 가능
+- **M2 plan v1.6 (API key 필요)**: 미작성. Anthropic key + HF token 발급 후 Task 3·6·7·8·9·10·11·12
 
 ### 핵심 가드 ⭐
-- `docs/knowledge/medical_law_tone_guide.md` — 의료법 anti-pattern 6개 + BETA 면책 박스 + B2C 가드
-- `docs/knowledge/korean_medical_system.md` — 환산지수·산정특례·IVF 별도 고시
-- `docs/knowledge/privacy_compliance.md` — Supabase RLS + PIPA + 비식별화
+- `docs/knowledge/medical_law_tone_guide.md` (K1) — 의료법 anti-pattern 6개 + BETA 면책 박스 + B2C 가드
+- `docs/knowledge/korean_medical_system.md` (K2) — 환산지수·산정특례·IVF 별도 고시
+- `docs/knowledge/privacy_compliance.md` (K4) — Supabase RLS + PIPA + 비식별화
+- `docs/knowledge/ai_companion_design.md` (K5 v1) — AI 동반자 4-5 영역·active inquiry·sub-페르소나 routing·system prompt v1·P2 정신건강 응급 확장 (M2/M6 backbone)
+- `docs/knowledge/rag_sources.md` (K6) — RAG knowledge base 소스 tier·페르소나 weighted 분포·special category chunks·갱신 룰
+- `docs/knowledge/sub_personas.md` (K7) ⭐ — 4 sub-페르소나 (P1·P2·P3·P4) 분석 · 영역 가중치 · 페르소나별 톤·few-shot · 응급 escalation 룰 · 공통 패턴 (의사 못 물은 질문·부부 룰·카더라 충돌·멘탈 trigger)
+
+### 페인 dump (raw material — 두 type 분리)
+
+**Type A (community archive)** — user가 카페·블로그·SNS·댓글 정리한 secondary research:
+- `docs/raw/pain-dumps/README.md` — dump 가이드·형식·익명화
+- `docs/raw/pain-dumps/TEMPLATE.md` — frontmatter 템플릿
+- `docs/raw/pain-dumps/QUESTIONS.md` — 5 영역 × 영역당 5-7 구체 질문
+- `docs/raw/pain-dumps/2026-05-14-다원.md` (1419 줄) — 4 페르소나 archetype dump. K7 sub_personas.md의 source.
+
+**Type B (founder 본인 raw)** — 별도 수령 예정. founder 부부 timeline 진행 시 정리. founder = 긍정 outlier 통찰로 Founder Diary 별도 angle. 저장 위치: `docs/raw/founder-timeline/` (예정).
+
+### Phase 0 콘텐츠 (Founder Diary 시작 패키지)
+- `docs/content/phase0/README.md` — 톤 가이드·익명화·publish 워크플로
+- `docs/content/phase0/01-intro-template.md` — 우리 부부 소개 (인스타 5 카드 + 블로그)
+- `docs/content/phase0/02-cycle-event-template.md` — 사이클 event (채취일 등)
+- `docs/content/phase0/03-cost-breakdown-template.md` — 회당 비용 분석 (SEO)
+- `docs/content/phase0/04-emotional-reflection-template.md` — 감정 reflection (raw)
+- `docs/content/phase0/05-decision-sounding-template.md` — 의사결정 sounding (E 영역)
+- `docs/content/phase0/persona-hooks.md` ⭐ — 4 페르소나 + Founder Diary 5 vertical hook 분기 (인스타 Card 1·블로그 제목·SEO 키워드·hashtag·publish 순서)
+
+### 의사결정 정리
+- `docs/specs/2026-05-14-open-questions-resolutions.md` — spec §13 8개 open question 답안 제안 (M2 plan 진입 전 결정 대기)
 
 ### hosto 마이그 reference
 - `docs/references/hosto_billing/` — 의료비 룰 엔진 패턴
@@ -269,8 +310,10 @@ user 질문: "단기간 실제로 돈이 될 만한 프로젝트?" → teum 5개
 - `data/seed/sanjeong_codes_2026.json` — 산정특례 V코드 (IVF 비대상)
 - `data/seed/coverage_rules/*.json` — NHI 외래 보장 결정표 4개
 
-### Cross-project
-- `docs/handoff/2026-05-13-hosto-data-request.md` — hosto 마이그 brief
+### Cross-project · Setup guides
+- `docs/handoff/2026-05-13-hosto-data-request.md` — hosto 마이그 brief (D1-D5·K1-K4·C1-C4 전체)
+- `docs/handoff/2026-05-14-hosto-d4-ivf-drugs.md` — D4 IVF 약물 사전 단독 깊이 brief (M2 RAG ingest 형식 명시)
+- `docs/handoff/c-setup-guide.md` — Phase 0 setup all-in-one (Vercel·인스타 핸들·Tally 베타 대기명단·첫 publish·첫 2주 일정)
 
 ---
 
@@ -293,7 +336,7 @@ user 질문: "단기간 실제로 돈이 될 만한 프로젝트?" → teum 5개
 ```powershell
 supabase start                  # 로컬 DB 켜기 (Docker 필요)
 supabase migration up --local   # 마이그레이션 적용
-npm run dev                     # 개발 서버 (localhost:3000)
+npm run dev                     # 개발 서버 (localhost:3100 — pum 전용 port, 3000 회피)
 npm run test:unit               # RLS 단위 테스트 (6개)
 npm run test:e2e                # 전체 흐름 E2E (Alice→Bob)
 npm run build                   # 빌드 검증

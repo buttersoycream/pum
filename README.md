@@ -26,7 +26,7 @@ Copy local Supabase keys from `supabase status` output into `.env.local`:
 NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
 SUPABASE_SERVICE_ROLE_KEY=<service_role key>
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3100
 ```
 
 Apply migrations + run dev server:
@@ -35,7 +35,7 @@ supabase migration up --local
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3100. (pum 전용 port — 3000은 다른 프로젝트가 사용 중일 수 있어 회피)
 
 ## Tests
 

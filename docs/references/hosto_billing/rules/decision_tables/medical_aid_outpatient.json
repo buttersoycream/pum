@@ -1,0 +1,230 @@
+{
+  "name": "medical_aid_outpatient",
+  "version": "2026.05.08-02",
+  "description": "의료급여 환자 외래 본인부담 결정표. 1종/2종 × 1차/2차/3차/보건기관/약국 × 원외/원내조제 조합별로 정액 또는 정률을 결정한다. 모든 룰은 급여 라인에만 적용 — 비급여/선별급여/100분의100본인부담은 결정표 매칭 외부에서 fallback으로 처리되어야 한다 (의료급여 정액제 법령 명시).",
+  "source": {
+    "legal_basis": "보건복지부 의료급여 본인부담금 고시",
+    "source_url": "https://www.mohw.go.kr/menu.es?mid=a10708030100",
+    "verification_status": "unverified",
+    "verified_at": null,
+    "verified_by": null,
+    "effective_from": "2026-01-01",
+    "effective_to": null,
+    "_verification_note": "정액 금액(1종 1차 1,000원 등)은 NHIS/MOHW 안내 페이지와 일치하지만 정식 고시 PDF 대조 검수가 아직 안 됐다. Phase 1.7 검수 워크플로우 도입 시 verified로 승격."
+  },
+  "applicability": {
+    "_comment": "이 결정표가 적용되는 전제. 모두 충족해야 매칭 시도. 사용자 인지 명확화 + 다른 결정표와 충돌 방지.",
+    "predicates": [
+      "is_medical_aid_recipient",
+      "is_outpatient",
+      "is_aid_level_consistent_with_institution"
+    ]
+  },
+  "rules": [
+    {
+      "id": "MA1-1-OUT-PRESCRIPTION",
+      "description": "의료급여1종 1차 외래 (의원), 원외 처방 — 급여 라인만",
+      "conditions": {
+        "insurance_type": "의료급여1종",
+        "medical_aid_level": "1차",
+        "dispensing_type": ["prescription", "none"],
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 1000,
+        "applied_program": "의료급여1종",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA1-1-OUT-IN_HOUSE",
+      "description": "의료급여1종 1차 외래 (의원), 원내 직접조제 — 급여 라인만",
+      "conditions": {
+        "insurance_type": "의료급여1종",
+        "medical_aid_level": "1차",
+        "dispensing_type": "in_house",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 1500,
+        "applied_program": "의료급여1종",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA1-2-OUT-PRESCRIPTION",
+      "description": "의료급여1종 2차 외래 (병원/종합병원), 원외 처방 — 급여 라인만",
+      "conditions": {
+        "insurance_type": "의료급여1종",
+        "medical_aid_level": "2차",
+        "dispensing_type": ["prescription", "none"],
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 1500,
+        "applied_program": "의료급여1종",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA1-2-OUT-IN_HOUSE",
+      "description": "의료급여1종 2차 외래, 원내 직접조제 — 급여 라인만",
+      "conditions": {
+        "insurance_type": "의료급여1종",
+        "medical_aid_level": "2차",
+        "dispensing_type": "in_house",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 2000,
+        "applied_program": "의료급여1종",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA1-3-OUT-PRESCRIPTION",
+      "description": "의료급여1종 3차 외래 (상급종합병원), 원외 처방 — 급여 라인만",
+      "conditions": {
+        "insurance_type": "의료급여1종",
+        "medical_aid_level": "3차",
+        "dispensing_type": ["prescription", "none"],
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 2000,
+        "applied_program": "의료급여1종",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA1-3-OUT-IN_HOUSE",
+      "description": "의료급여1종 3차 외래, 원내 직접조제 — 급여 라인만",
+      "conditions": {
+        "insurance_type": "의료급여1종",
+        "medical_aid_level": "3차",
+        "dispensing_type": "in_house",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 2500,
+        "applied_program": "의료급여1종",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA-PUBLIC_HEALTH-OUT",
+      "description": "의료급여 외래 — 보건기관 (1종/2종 공통, 면제) — 급여 라인만",
+      "conditions": {
+        "insurance_type": ["의료급여1종", "의료급여2종"],
+        "medical_aid_level": "보건기관",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 0,
+        "applied_program": "의료급여_보건기관_면제",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA-PHARMACY-PRESCRIPTION",
+      "description": "의료급여 약국, 원외처방 조제 — 급여 라인만",
+      "conditions": {
+        "insurance_type": ["의료급여1종", "의료급여2종"],
+        "medical_aid_level": "약국",
+        "dispensing_type": ["prescription", "none"],
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 500,
+        "applied_program": "의료급여_약국",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA-PHARMACY-IN_HOUSE",
+      "description": "의료급여 약국, 원내 직접조제 — 급여 라인만",
+      "conditions": {
+        "insurance_type": ["의료급여1종", "의료급여2종"],
+        "medical_aid_level": "약국",
+        "dispensing_type": "in_house",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 900,
+        "applied_program": "의료급여_약국",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA2-1-OUT-PRESCRIPTION",
+      "description": "의료급여2종 1차 외래 (의원), 원외 처방 — 급여 라인만",
+      "conditions": {
+        "insurance_type": "의료급여2종",
+        "medical_aid_level": "1차",
+        "dispensing_type": ["prescription", "none"],
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 1000,
+        "applied_program": "의료급여2종",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA2-1-OUT-IN_HOUSE",
+      "description": "의료급여2종 1차 외래, 원내 직접조제 — 급여 라인만",
+      "conditions": {
+        "insurance_type": "의료급여2종",
+        "medical_aid_level": "1차",
+        "dispensing_type": "in_house",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "flat_per_visit",
+        "copayment_amount": 1500,
+        "applied_program": "의료급여2종",
+        "priority_group": "medical_aid_flat"
+      }
+    },
+    {
+      "id": "MA2-2-OUT",
+      "description": "의료급여2종 2차 외래 (병원/종합병원) — 정률 15% (급여 라인만)",
+      "conditions": {
+        "insurance_type": "의료급여2종",
+        "medical_aid_level": "2차",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.15,
+        "applied_program": "의료급여2종",
+        "priority_group": "medical_aid_rate"
+      }
+    },
+    {
+      "id": "MA2-3-OUT",
+      "description": "의료급여2종 3차 외래 (상급종합병원) — 정률 15% (급여 라인만)",
+      "conditions": {
+        "insurance_type": "의료급여2종",
+        "medical_aid_level": "3차",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.15,
+        "applied_program": "의료급여2종",
+        "priority_group": "medical_aid_rate"
+      }
+    }
+  ]
+}

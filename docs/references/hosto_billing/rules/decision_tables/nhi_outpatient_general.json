@@ -1,0 +1,142 @@
+{
+  "name": "nhi_outpatient_general",
+  "version": "2026.05.09-02",
+  "description": "건강보험 외래 일반 본인부담률 결정표. 다음 모든 조건을 충족하는 라인만 이 결정표가 답한다: (1) 보험 유형 = 건강보험, (2) 진료 구분 = 외래, (3) 환자 만 6세 이상 65세 미만, (4) 산정특례/보훈/중증장애 등록 없음, (5) coverage_type = 급여. 영유아/노인/특례/비급여/선별급여는 결정표 매칭 외부에서 fallback 또는 별도 결정표 (Phase 2)로 처리됨. 따라서 'NHI 일반 성인 외래 전체'가 아니라 '모든 라인이 위 조건에 해당하는 케이스만' 새 엔진에 위임됨.",
+  "source": {
+    "legal_basis": "국민건강보험법 시행령 별표2 / HIRA 외래 본인부담률 고시",
+    "source_url": "https://www.hira.or.kr/co/dummy.do?pgmid=HIRAA030056020110",
+    "verification_status": "unverified",
+    "verified_at": null,
+    "verified_by": null,
+    "effective_from": "2026-01-01",
+    "effective_to": null,
+    "_verification_note": "이 결정표의 본인부담률은 HIRA 일반 안내 기준의 상식적 매핑이지만, 정식 고시 PDF 대조 검수가 아직 안 됐다. 검수 워크플로우 (Phase 1.7) 도입 시 verification_status를 'verified'로 승격."
+  },
+  "applicability": {
+    "_comment": "건강보험 외래 + 일반 성인 + 감면 제도 없음. 비-급여 라인은 결정표 매칭 외부에서 fallback (의료급여 결정표와 동일 패턴).",
+    "predicates": [
+      "is_nhi_insured",
+      "is_outpatient",
+      "is_general_adult",
+      "has_no_special_program"
+    ]
+  },
+  "rules": [
+    {
+      "id": "NHI-OUT-CLINIC",
+      "description": "건강보험 외래 — 의원 30% (지역 가산 없음)",
+      "conditions": {
+        "institution_type": "의원",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.30,
+        "applied_program": "건강보험_일반",
+        "priority_group": "nhi_outpatient_rate"
+      }
+    },
+    {
+      "id": "NHI-OUT-HOSPITAL-DONG",
+      "description": "건강보험 외래 — 병원 동지역 40%",
+      "conditions": {
+        "institution_type": "병원",
+        "institution_region": "동",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.40,
+        "applied_program": "건강보험_일반",
+        "priority_group": "nhi_outpatient_rate"
+      }
+    },
+    {
+      "id": "NHI-OUT-HOSPITAL-EUPMYEON",
+      "description": "건강보험 외래 — 병원 읍면 35% (지역 가산 인하)",
+      "conditions": {
+        "institution_type": "병원",
+        "institution_region": "읍면",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.35,
+        "applied_program": "건강보험_일반",
+        "priority_group": "nhi_outpatient_rate"
+      }
+    },
+    {
+      "id": "NHI-OUT-GENERAL-DONG",
+      "description": "건강보험 외래 — 종합병원 동지역 50%",
+      "conditions": {
+        "institution_type": "종합병원",
+        "institution_region": "동",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.50,
+        "applied_program": "건강보험_일반",
+        "priority_group": "nhi_outpatient_rate"
+      }
+    },
+    {
+      "id": "NHI-OUT-GENERAL-EUPMYEON",
+      "description": "건강보험 외래 — 종합병원 읍면 45%",
+      "conditions": {
+        "institution_type": "종합병원",
+        "institution_region": "읍면",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.45,
+        "applied_program": "건강보험_일반",
+        "priority_group": "nhi_outpatient_rate"
+      }
+    },
+    {
+      "id": "NHI-OUT-TERTIARY",
+      "description": "건강보험 외래 — 상급종합병원 60% (읍면 가산 없음)",
+      "conditions": {
+        "institution_type": "상급종합병원",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.60,
+        "applied_program": "건강보험_일반",
+        "priority_group": "nhi_outpatient_rate"
+      }
+    },
+    {
+      "id": "NHI-OUT-PHARMACY",
+      "description": "건강보험 약국 30%",
+      "conditions": {
+        "institution_type": "약국",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.30,
+        "applied_program": "건강보험_약국",
+        "priority_group": "nhi_outpatient_rate"
+      }
+    },
+    {
+      "id": "NHI-OUT-PUBLIC_HEALTH",
+      "description": "건강보험 보건기관 30%",
+      "conditions": {
+        "institution_type": "보건기관",
+        "coverage_type": "급여"
+      },
+      "outcomes": {
+        "copayment_type": "rate_per_line",
+        "copayment_rate": 0.30,
+        "applied_program": "건강보험_보건기관",
+        "priority_group": "nhi_outpatient_rate"
+      }
+    }
+  ]
+}

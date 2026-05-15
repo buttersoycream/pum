@@ -1,0 +1,174 @@
+{
+  "_source": "NHIS 산정특례 안내 (https://www.nhis.or.kr/static/html/wbma/c/wbmac0215.html)",
+  "_curated_at": "2026-05-07",
+  "_year": 2026,
+  "_note": "공식 안내 페이지에서 확보한 대표 V코드/특정기호. 희귀질환/중증난치질환은 별첨 목록 기반이라 단일 V코드가 아니라 카테고리 row로만 등록. 추가 V코드 발굴은 검수 워크플로우에서 진행.",
+  "_disclaimer": "이 표는 큐레이션 데이터이며, 실제 적용은 환자 등록증의 V코드/특정기호와 진료 항목 적합성을 함께 확인해야 합니다.",
+  "codes": [
+    {
+      "code": "V193",
+      "category": "암",
+      "target_disease": "C00~C97, D00~D09, D32~D33, D37~D48",
+      "copayment_rate": 0.05,
+      "duration_days": 1825,
+      "annual_limit_days": null,
+      "requires_preapproval": true,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "등록한 암환자가 등록일로부터 5년간 해당 상병 진료 시 적용"
+    },
+    {
+      "code": "V191",
+      "category": "뇌혈관",
+      "target_disease": "뇌혈관질환 (수술 동반)",
+      "copayment_rate": 0.05,
+      "duration_days": 30,
+      "annual_limit_days": null,
+      "requires_preapproval": false,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "뇌혈관질환자가 해당 상병 치료를 위해 특정 수술을 받은 경우 최대 30일"
+    },
+    {
+      "code": "V268",
+      "category": "뇌혈관",
+      "target_disease": "중증 뇌출혈 (급성기)",
+      "copayment_rate": 0.05,
+      "duration_days": 30,
+      "annual_limit_days": null,
+      "requires_preapproval": false,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "중증 뇌출혈환자가 급성기에 입원하여 진료를 받은 경우"
+    },
+    {
+      "code": "V275",
+      "category": "뇌혈관",
+      "target_disease": "뇌경색증 (24시간 이내, NIHSS≥5)",
+      "copayment_rate": 0.05,
+      "duration_days": 30,
+      "annual_limit_days": null,
+      "requires_preapproval": false,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "뇌경색증 환자가 증상 발생 24시간 이내 입원, NIHSS 5점 이상"
+    },
+    {
+      "code": "V192",
+      "category": "심장",
+      "target_disease": "심장질환 (수술/약제)",
+      "copayment_rate": 0.05,
+      "duration_days": 60,
+      "annual_limit_days": null,
+      "requires_preapproval": false,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "심장질환자가 수술 또는 약제투여를 받은 경우 최대 30/60일 (질환별 차등)"
+    },
+    {
+      "code": "V247",
+      "category": "중증화상",
+      "target_disease": "중증화상",
+      "copayment_rate": 0.05,
+      "duration_days": 365,
+      "annual_limit_days": null,
+      "requires_preapproval": true,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "등록한 중증화상환자가 등록일로부터 1년간 해당 상병 진료"
+    },
+    {
+      "code": "V248",
+      "category": "중증화상",
+      "target_disease": "중증화상",
+      "copayment_rate": 0.05,
+      "duration_days": 365,
+      "annual_limit_days": null,
+      "requires_preapproval": true,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "중증화상 등록 코드"
+    },
+    {
+      "code": "V249",
+      "category": "중증화상",
+      "target_disease": "중증화상",
+      "copayment_rate": 0.05,
+      "duration_days": 365,
+      "annual_limit_days": null,
+      "requires_preapproval": true,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "중증화상 등록 코드"
+    },
+    {
+      "code": "V250",
+      "category": "중증화상",
+      "target_disease": "중증화상",
+      "copayment_rate": 0.05,
+      "duration_days": 365,
+      "annual_limit_days": null,
+      "requires_preapproval": true,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "중증화상 등록 코드"
+    },
+    {
+      "code": "V273",
+      "category": "중증외상",
+      "target_disease": "ISS 15점 이상 중증외상",
+      "copayment_rate": 0.05,
+      "duration_days": 30,
+      "annual_limit_days": null,
+      "requires_preapproval": false,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "손상중증도점수(ISS) 15점 이상에 해당하는 중증외상환자"
+    },
+    {
+      "code": "V800",
+      "category": "중증치매",
+      "target_disease": "중증치매",
+      "copayment_rate": 0.10,
+      "duration_days": 1825,
+      "annual_limit_days": null,
+      "requires_preapproval": true,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "등록한 중증치매 환자, 등록일로부터 5년"
+    },
+    {
+      "code": "V810",
+      "category": "중증치매",
+      "target_disease": "중증치매 (일수 관리 항목)",
+      "copayment_rate": 0.10,
+      "duration_days": null,
+      "annual_limit_days": 60,
+      "requires_preapproval": true,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "연간 60일(요건 충족 시 추가 60일, 최대 120일) 한하여 사용일수 관리"
+    },
+    {
+      "code": "V000",
+      "category": "결핵",
+      "target_disease": "결핵",
+      "copayment_rate": 0.0,
+      "duration_days": null,
+      "annual_limit_days": null,
+      "requires_preapproval": false,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "결핵예방법 시행규칙에 따라 신고한 결핵환자 중 치료 진행 중인 자, 진료 기간 본인부담 면제"
+    },
+    {
+      "code": "RARE",
+      "category": "희귀질환",
+      "target_disease": "별첨6의 희귀질환 목록",
+      "copayment_rate": 0.10,
+      "duration_days": 1825,
+      "annual_limit_days": null,
+      "requires_preapproval": true,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "별첨 목록 기반 — 단일 V코드 아님. 등록증의 특정기호로 적용 여부 판단. 5년 등록"
+    },
+    {
+      "code": "INTRACTABLE",
+      "category": "중증난치",
+      "target_disease": "별첨9의 중증난치질환 목록",
+      "copayment_rate": 0.10,
+      "duration_days": 1825,
+      "annual_limit_days": null,
+      "requires_preapproval": true,
+      "excluded_coverage_types": ["비급여", "100분의100본인부담", "선별급여"],
+      "notes": "별첨 목록 기반 — 단일 V코드 아님. 등록증의 특정기호로 판단. 5년 등록"
+    }
+  ]
+}
