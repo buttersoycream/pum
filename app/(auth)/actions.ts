@@ -2,6 +2,13 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { safeInternalPath } from "@/lib/auth/safe-redirect";
+
+function destination(formData: FormData): string {
+  return (
+    safeInternalPath(String(formData.get("redirect_to") ?? "")) ?? "/dashboard"
+  );
+}
 
 export async function signupAction(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
@@ -19,7 +26,7 @@ export async function signupAction(formData: FormData) {
   });
   if (error) return { error: error.message };
 
-  redirect("/dashboard");
+  redirect(destination(formData));
 }
 
 export async function loginAction(formData: FormData) {
@@ -35,7 +42,7 @@ export async function loginAction(formData: FormData) {
   });
   if (error) return { error: error.message };
 
-  redirect("/dashboard");
+  redirect(destination(formData));
 }
 
 export async function logoutAction() {

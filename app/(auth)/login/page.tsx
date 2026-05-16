@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { use, useState, useTransition } from "react";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,9 +9,18 @@ import { Alert } from "@/components/ui/alert";
 import { loginAction } from "../actions";
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect_to?: string }>;
+}) {
+  const { redirect_to } = use(searchParams);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+
+  const signupHref = redirect_to
+    ? `/signup?redirect_to=${encodeURIComponent(redirect_to)}`
+    : "/signup";
 
   return (
     <Card>
@@ -21,6 +30,7 @@ export default function LoginPage() {
       <form
         action={(fd) =>
           startTransition(async () => {
+            if (redirect_to) fd.set("redirect_to", redirect_to);
             const r = await loginAction(fd);
             if (r?.error) setError(r.error);
           })
@@ -49,7 +59,7 @@ export default function LoginPage() {
           </Button>
           <p className="text-muted-foreground text-sm">
             아직 계정이 없으신가요?{" "}
-            <Link href="/signup" className="underline">
+            <Link href={signupHref} className="underline">
               가입하기
             </Link>
           </p>
