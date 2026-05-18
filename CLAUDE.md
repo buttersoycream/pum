@@ -137,7 +137,7 @@ user 질문: "단기간 실제로 돈이 될 만한 프로젝트?" → teum 5개
 - 익명 매칭 커뮤니티
 - sub-페르소나 확장 (IUI · 자연시도자 · 임신 후)
 - 의사·전문가 매칭
-- iOS/Android 네이티브 검토
+- iOS/Android 네이티브 앱 — **Phase 2 Capacitor wrap 확정** (iOS+Android 동시, 트리거 기반): `docs/specs/2026-05-18-ios-android-native-strategy.md`
 - B2B 한국 IVF 클리닉 화이트라벨
 
 ---

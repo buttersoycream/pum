@@ -116,7 +116,9 @@ M2 시작 시 Supabase pgvector·BGE-M3 commit (가설). M6 직전 embedding 모
 
 ### 추천
 
-**Phase 1 = PWA. M3 카톡 알림 추가 시 재검토. Phase 2에 RN 검토.**
+**Phase 1 = PWA. M3 카톡 알림 추가 시 재검토. Phase 2 = Capacitor wrap (iOS+Android 동시).**
+
+> ⚠️ 2026-05-18 확정·교체 — RN 기각, **Capacitor wrap** 채택, iOS+Android 동시, 착수 트리거 명문화. 상세·근거: `docs/specs/2026-05-18-ios-android-native-strategy.md`. 아래 옵션·이유·timing 은 당시 검토 기록(히스토리).
 
 이유:
 - founder = 9년차 PO/기획자, RN 학습 곡선 + 별 codebase 관리 부담 ↑
