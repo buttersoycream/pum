@@ -36,5 +36,17 @@ describe("mapPersonalContext", () => {
     expect(pc.cycleStage).toBe("stim");
     expect(pc.cycleNumber).toBe(2);
     expect(pc.recentEmotionalState).toBe("지쳐 있음");
+    expect(pc.currentMedications).toBeUndefined();
+    expect(pc.recentCoupleIssues).toBeUndefined();
+  });
+
+  it("preserves cycle_number 0 (guard regression)", async () => {
+    const coupleId = await makeCouple();
+    await admin.from("personal_context").insert({
+      couple_id: coupleId,
+      cycle_number: 0,
+    });
+    const pc = await mapPersonalContext(admin, coupleId);
+    expect(pc.cycleNumber).toBe(0);
   });
 });
