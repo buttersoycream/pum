@@ -7,19 +7,21 @@ const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
 
 async function makeUser(email: string) {
-  const { data } = await admin.auth.admin.createUser({
+  const { data, error } = await admin.auth.admin.createUser({
     email, password: "TestPass123!", email_confirm: true,
   });
+  if (error) throw error;
   return data!.user!.id;
 }
 async function signInAs(email: string) {
   const c = createClient(url, anonKey, { auth: { persistSession: false } });
-  await c.auth.signInWithPassword({ email, password: "TestPass123!" });
+  const { error } = await c.auth.signInWithPassword({ email, password: "TestPass123!" });
+  if (error) throw error;
   return c;
 }
 
 describe("ai_chats RLS", () => {
-  let aliceId: string, bobId: string, malloryId: string, coupleId: string;
+  let aliceId: string, bobId: string, coupleId: string;
   const ts = Date.now();
   const aliceEmail = `chat-a-${ts}@example.com`;
   const malloryEmail = `chat-m-${ts}@example.com`;
@@ -27,7 +29,7 @@ describe("ai_chats RLS", () => {
   beforeAll(async () => {
     aliceId = await makeUser(aliceEmail);
     bobId = await makeUser(`chat-b-${ts}@example.com`);
-    malloryId = await makeUser(malloryEmail);
+    await makeUser(malloryEmail);
     const { data: c } = await admin
       .from("couples").insert({ created_by: aliceId }).select().single();
     coupleId = c!.id;

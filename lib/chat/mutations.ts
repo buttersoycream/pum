@@ -37,12 +37,17 @@ export async function addMessage(
     sources?: unknown;
   },
 ) {
-  const { error } = await db.from("ai_messages").insert({
-    chat_id: args.chatId,
-    role: args.role,
-    content: args.content,
-    guard_triggered: args.guardTriggered ?? null,
-    sources: args.sources ?? null,
-  });
+  const { data, error } = await db
+    .from("ai_messages")
+    .insert({
+      chat_id: args.chatId,
+      role: args.role,
+      content: args.content,
+      guard_triggered: args.guardTriggered ?? null,
+      sources: args.sources ?? null,
+    })
+    .select()
+    .single();
   if (error) throw error;
+  return data;
 }
