@@ -18,17 +18,38 @@ const admin = () =>
     { auth: { persistSession: false } },
   );
 
+// visibility is intentionally excluded — must be read from DB, not client
 type Body = {
   chatId: string;
   message: string;
-  visibility: "pair" | "private";
   meta?: { cycleCount?: number; yearsTrying?: number; maleFactor?: boolean };
 };
 
 export async function POST(request: Request) {
   const user = await requireUser();
-  const { chatId, message, visibility, meta = {} } = (await request.json()) as Body;
+  const { chatId, message, meta = {} } = (await request.json()) as Body;
+
+  // Fix 3: reject empty input before any DB/AI work
+  if (!chatId || !message?.trim()) {
+    return Response.json({ error: "chatId and message are required" }, { status: 400 });
+  }
+
   const db = admin();
+
+  // Fix 2: resolve coupleId + load chat from DB; 404 if not owned by this couple
+  const coupleId = await getCoupleForUser(user.id);
+  const { data: chat } = await db
+    .from("ai_chats")
+    .select("couple_id, visibility")
+    .eq("id", chatId)
+    .maybeSingle();
+
+  if (!chat || !coupleId || chat.couple_id !== coupleId) {
+    return Response.json({ error: "Not found" }, { status: 404 });
+  }
+
+  // Fix 4: visibility comes from DB, not client
+  const visibility = chat.visibility as "pair" | "private";
 
   // Guard check — both detectors return { triggered: boolean; matched: string[] }
   const physicalResult = detectPhysicalEmergency(message);
@@ -43,8 +64,13 @@ export async function POST(request: Request) {
 
   const persona = classifyPersona(message, meta);
   const area = classifyArea(message);
-  const coupleId = await getCoupleForUser(user.id);
-  const personalContext = coupleId ? await mapPersonalContext(db, coupleId) : {};
+
+  // Fix 5: degrade gracefully if personal context lookup fails
+  const personalContext = await mapPersonalContext(db, coupleId).catch((e) => {
+    console.error("[chat] mapPersonalContext failed", e);
+    return {} as Awaited<ReturnType<typeof mapPersonalContext>>;
+  });
+
   const system = buildSystemPrompt({ persona, visibility, personalContext });
 
   const { data: history } = await db
@@ -66,12 +92,18 @@ export async function POST(request: Request) {
     system,
     messages,
     providerOptions: CHAT_PROVIDER_OPTIONS,
+    // Fix 1: wrap entire body so silent failures are logged and not lost
     onFinish: async ({ text }) => {
-      await addMessage(db, { chatId, role: "assistant", content: text });
-      await db
-        .from("ai_chats")
-        .update({ area, persona, updated_at: new Date().toISOString() })
-        .eq("id", chatId);
+      try {
+        await addMessage(db, { chatId, role: "assistant", content: text });
+        const { error: updErr } = await db
+          .from("ai_chats")
+          .update({ area, persona, updated_at: new Date().toISOString() })
+          .eq("id", chatId);
+        if (updErr) console.error("[chat] ai_chats update failed", chatId, updErr);
+      } catch (e) {
+        console.error("[chat:onFinish] persist failed", chatId, e);
+      }
     },
   });
 
