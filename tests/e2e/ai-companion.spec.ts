@@ -37,12 +37,11 @@ test("physical emergency: escalation, no AI call (key not required)", async ({
   await page.click("text=시작하기");
   await page.waitForURL("**/chat/**", { timeout: 10_000 });
 
-  // Composer input: placeholder="무엇이든 편하게 적어주세요" (ChatComposer.tsx)
-  // Use getByPlaceholder to avoid ambiguity with radio inputs on other pages
-  await page.getByPlaceholder("무엇이든 편하게 적어주세요").fill(
-    // "소변이 안 나" matches /소변이 안 나/ in emergency-keywords.ts
-    "소변이 안 나와요",
-  );
+  // Wait for ChatComposer to mount after useTransition + server-action navigation settles
+  const composer = page.getByPlaceholder("무엇이든 편하게 적어주세요");
+  await composer.waitFor({ timeout: 10_000 });
+  // "소변이 안 나" matches /소변이 안 나/ in emergency-keywords.ts
+  await composer.fill("소변이 안 나와요");
   // Send button text: "보내기" (confirmed in ChatComposer.tsx)
   await page.click("text=보내기");
 
@@ -63,14 +62,15 @@ test("chat golden path (requires AI_GATEWAY_API_KEY)", async ({ page }) => {
   await page.click("text=시작하기");
   await page.waitForURL("**/chat/**", { timeout: 10_000 });
 
-  await page.getByPlaceholder("무엇이든 편하게 적어주세요").fill(
-    "커피 하루 한 잔은 괜찮을까요?",
-  );
+  // Wait for ChatComposer to mount after useTransition + server-action navigation settles
+  const composer = page.getByPlaceholder("무엇이든 편하게 적어주세요");
+  await composer.waitFor({ timeout: 10_000 });
+  await composer.fill("커피 하루 한 잔은 괜찮을까요?");
   await page.click("text=보내기");
 
-  // Assistant message: role="assistant" → className includes "bg-muted" (ChatMessage.tsx)
-  // BetaDisclaimer uses "bg-amber-50", not "bg-muted", so .bg-muted is unambiguous here.
-  await expect(page.locator(".bg-muted").last()).not.toBeEmpty({
+  // Assistant message: data-role="assistant" anchor (added to ChatMessage.tsx outermost div)
+  // Stable against class-name refactors; consistent with repo's data-testid convention.
+  await expect(page.locator('[data-role="assistant"]').last()).not.toBeEmpty({
     timeout: 20_000,
   });
 });
