@@ -28,19 +28,22 @@ export default function NewChatPage() {
       >
         <CardContent className="space-y-3">
           {error && <Alert variant="destructive">{error}</Alert>}
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="radio"
-              name="visibility"
-              value="pair"
-              defaultChecked
-            />
-            함께 보기 (배우자와 공유)
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input type="radio" name="visibility" value="private" />
-            나만 보기
-          </label>
+          <fieldset className="space-y-3">
+            <legend className="sr-only">대화 공개 범위</legend>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="radio"
+                name="visibility"
+                value="pair"
+                defaultChecked
+              />
+              함께 보기 (배우자와 공유)
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <input type="radio" name="visibility" value="private" />
+              나만 보기
+            </label>
+          </fieldset>
         </CardContent>
         <CardFooter>
           <Button type="submit" className="w-full" disabled={pending}>

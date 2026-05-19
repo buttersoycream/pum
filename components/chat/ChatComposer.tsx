@@ -27,6 +27,7 @@ export function ChatComposer({
         onChange={(e) => setText(e.target.value)}
         placeholder="무엇이든 편하게 적어주세요"
         disabled={pending}
+        aria-label="메시지 입력"
       />
       <Button type="submit" disabled={pending || !text.trim()}>
         보내기
