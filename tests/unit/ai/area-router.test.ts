@@ -5,10 +5,14 @@ describe("classifyArea", () => {
   it("A: 일상 do/don't", () => {
     expect(classifyArea("커피 마셔도 되나요")).toBe("A");
     expect(classifyArea("운동 해도 괜찮을까요")).toBe("A");
+    // Regression: generic "되나요" suffix must not absorb B/E questions into A
+    expect(classifyArea("초음파는 어떻게 되나요")).not.toBe("A");
   });
   it("B: 시술·검사 해석", () => {
     expect(classifyArea("AMH 수치가 1.2 나왔는데")).toBe("B");
     expect(classifyArea("초음파 결과 난포가")).toBe("B");
+    // Regression: "수치심" (shame, area C vocab) must NOT match area B
+    expect(classifyArea("수치심이 들어요")).not.toBe("B");
   });
   it("C: 멘탈", () => {
     expect(classifyArea("요즘 너무 우울하고 불안해요")).toBe("C");
@@ -22,5 +26,7 @@ describe("classifyArea", () => {
   });
   it("mixed: 신호 없음/복합", () => {
     expect(classifyArea("안녕하세요")).toBe("mixed");
+    // Multi-area hit: "착상" → B, "힘들" → C → 2 rules → must be "mixed"
+    expect(classifyArea("착상 실패하고 너무 힘들어요")).toBe("mixed");
   });
 });
