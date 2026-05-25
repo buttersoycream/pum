@@ -106,7 +106,7 @@ user 질문: "단기간 실제로 돈이 될 만한 프로젝트?" → teum 5개
 
 ### 인프라
 - GitHub: https://github.com/buttersoycream/pum (private, push 동기화)
-- Vercel CLI 연결됨 (`buttersoycreams-projects/pum`) — 실제 deploy는 user 직접
+- Vercel CLI 연결됨 (`butter-kims-projects/pum`) — 실제 deploy는 user 직접. ⚠️ pum 과 gyeol 은 Vercel·Supabase 계정(아이디)이 **서로 다름** (2026-05-25 확인)
 - Supabase local stack (Docker) 작동
 - 로컬에서 회원가입·페어 만들기·dashboard 완전 작동
 
