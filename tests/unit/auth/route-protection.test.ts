@@ -29,6 +29,12 @@ describe("isProtectedPath", () => {
     expect(isProtectedPath("/me")).toBe(true);
     expect(isProtectedPath("/home/x")).toBe(true);
   });
+
+  it("protects /chat and its subpaths", () => {
+    expect(isProtectedPath("/chat")).toBe(true);
+    expect(isProtectedPath("/chat/new")).toBe(true);
+    expect(isProtectedPath("/chat/abc123")).toBe(true);
+  });
 });
 
 describe("isAuthPath", () => {

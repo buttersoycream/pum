@@ -1,7 +1,7 @@
 import { streamText, gateway } from "ai";
-import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { requireUser } from "@/lib/auth/current-user";
-import { getCoupleForUser } from "@/lib/couple/queries";
+import { getOrCreateCoupleForUser } from "@/lib/couple/queries";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { CHAT_MODEL, CHAT_PROVIDER_OPTIONS } from "@/lib/ai/client";
 import { buildSystemPrompt } from "@/lib/ai/system-prompt";
 import { classifyPersona } from "@/lib/ai/persona-router";
@@ -11,12 +11,7 @@ import { addMessage } from "@/lib/chat/mutations";
 import { detectPhysicalEmergency } from "@/lib/ai/guards/emergency-keywords";
 import { detectMentalHealthEmergency } from "@/lib/ai/guards/mental-health-emergency";
 
-const admin = () =>
-  createServiceClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  );
+const admin = createAdminClient;
 
 // visibility is intentionally excluded — must be read from DB, not client
 type Body = {
@@ -37,14 +32,14 @@ export async function POST(request: Request) {
   const db = admin();
 
   // Fix 2: resolve coupleId + load chat from DB; 404 if not owned by this couple
-  const coupleId = await getCoupleForUser(user.id);
+  const coupleId = await getOrCreateCoupleForUser(user.id);
   const { data: chat } = await db
     .from("ai_chats")
     .select("couple_id, visibility")
     .eq("id", chatId)
     .maybeSingle();
 
-  if (!chat || !coupleId || chat.couple_id !== coupleId) {
+  if (!chat || chat.couple_id !== coupleId) {
     return Response.json({ error: "Not found" }, { status: 404 });
   }
 

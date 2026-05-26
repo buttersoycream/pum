@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { createClient as createServiceClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function getCoupleForUser(userId: string) {
   const supabase = await createClient();
@@ -19,11 +19,7 @@ export async function getCoupleForUser(userId: string) {
 export async function getOrCreateCoupleForUser(userId: string): Promise<string> {
   const existing = await getCoupleForUser(userId);
   if (existing) return existing;
-  const admin = createServiceClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  );
+  const admin = createAdminClient();
   const { data: c, error } = await admin
     .from("couples")
     .insert({ created_by: userId })

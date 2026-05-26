@@ -45,7 +45,9 @@ test("Unauthenticated invitee: welcome -> signup -> return -> accept", async ({
   // signup returns Bob to the welcome screen, now authenticated
   await bob.waitForURL("**/couple/accept/**", { timeout: 15_000 });
   await bob.click("text=수락하기");
-  await bob.waitForURL("**/dashboard");
+  await bob.waitForURL("**/home");
+  // Verify partner is visible on dashboard
+  await bob.goto("/dashboard");
   await expect(bob.locator('[data-testid="partner-email"]')).toHaveText(
     `pa-alice-${TS}@example.com`,
   );
@@ -70,7 +72,9 @@ test("Recovery: invitee who already made an empty couple still joins", async ({
   // Bob then opens Alice's real invite — recovery should kick in
   await bob.goto(inviteUrl);
   await bob.click("text=수락하기");
-  await bob.waitForURL("**/dashboard");
+  await bob.waitForURL("**/home");
+  // Verify partner is visible on dashboard
+  await bob.goto("/dashboard");
   await expect(bob.locator('[data-testid="partner-email"]')).toHaveText(
     `pa2-alice-${TS}@example.com`,
   );

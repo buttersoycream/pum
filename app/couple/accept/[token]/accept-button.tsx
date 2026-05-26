@@ -18,7 +18,7 @@ export function AcceptButton({ token }: { token: string }) {
         setError(r.error);
         return;
       }
-      router.push("/dashboard");
+      router.push("/home");
     });
 
   return (

@@ -34,7 +34,9 @@ test("Full couple flow: Alice invites, Bob accepts, both see partner", async ({
   await signup(bob, BOB);
   await bob.goto(inviteUrl);
   await bob.click("text=수락하기");
-  await bob.waitForURL("**/dashboard");
+  await bob.waitForURL("**/home");
+  // Verify partner is visible on dashboard
+  await bob.goto("/dashboard");
   await expect(bob.locator('[data-testid="partner-email"]')).toHaveText(ALICE);
 
   // Alice refreshes — sees Bob

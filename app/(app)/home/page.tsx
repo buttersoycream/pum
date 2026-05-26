@@ -1,7 +1,7 @@
 import { requireUser } from "@/lib/auth/current-user";
 import { getOrCreateCoupleForUser } from "@/lib/couple/queries";
 import { mapPersonalContext } from "@/lib/ai/personal-context";
-import { createClient as createServiceClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { stageLabel } from "@/lib/cycle/stages";
 import { articlesForStage, listArticles } from "@/lib/content/articles";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import Link from "next/link";
 export default async function HomePage() {
   const user = await requireUser();
   const coupleId = await getOrCreateCoupleForUser(user.id);
-  const admin = createServiceClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, { auth: { persistSession: false } });
+  const admin = createAdminClient();
   const pc = await mapPersonalContext(admin, coupleId);
   const label = stageLabel(pc.cycleStage ?? null);
   const recommended = pc.cycleStage ? articlesForStage(pc.cycleStage) : listArticles().slice(0, 4);
