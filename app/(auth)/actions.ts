@@ -6,7 +6,7 @@ import { safeInternalPath } from "@/lib/auth/safe-redirect";
 
 function destination(formData: FormData): string {
   return (
-    safeInternalPath(String(formData.get("redirect_to") ?? "")) ?? "/dashboard"
+    safeInternalPath(String(formData.get("redirect_to") ?? "")) ?? "/home"
   );
 }
 

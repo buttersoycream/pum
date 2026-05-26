@@ -55,7 +55,7 @@ export async function updateSession(request: NextRequest) {
     }
     const url = request.nextUrl.clone();
     url.search = "";
-    url.pathname = "/dashboard";
+    url.pathname = "/home";
     return NextResponse.redirect(url);
   }
 
