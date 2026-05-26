@@ -30,9 +30,10 @@ export async function getOrCreateCoupleForUser(userId: string): Promise<string> 
     .select("id")
     .single();
   if (error) throw error;
-  await admin
+  const { error: mErr } = await admin
     .from("couple_members")
     .insert({ couple_id: c.id, user_id: userId });
+  if (mErr) throw mErr;
   return c.id as string;
 }
 
