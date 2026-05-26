@@ -31,6 +31,24 @@ async function signInAs(email: string) {
   return client;
 }
 
+async function selfCoupleOf(userId: string): Promise<string> {
+  const { data } = await admin
+    .from("couple_members")
+    .select("couple_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!data?.couple_id) throw new Error(`No self-couple found for ${userId}`);
+  return data.couple_id;
+}
+
+async function joinCouple(joinerUserId: string, targetCoupleId: string) {
+  const selfCouple = await selfCoupleOf(joinerUserId);
+  await admin.from("couples").delete().eq("id", selfCouple);
+  await admin
+    .from("couple_members")
+    .insert({ couple_id: targetCoupleId, user_id: joinerUserId });
+}
+
 describe("ai_chats RLS isolation", () => {
   let alice: { id: string; email: string };
   let bob: { id: string; email: string };
@@ -44,28 +62,12 @@ describe("ai_chats RLS isolation", () => {
     bob = await makeUser(`bob-aichat-${ts}@example.com`);
     charlie = await makeUser(`charlie-aichat-${ts}@example.com`);
 
-    // Alice·Bob 페어
-    const { data: abCouple } = await admin
-      .from("couples")
-      .insert({ created_by: alice.id })
-      .select()
-      .single();
-    abCoupleId = abCouple!.id;
-    await admin.from("couple_members").insert([
-      { couple_id: abCoupleId, user_id: alice.id },
-      { couple_id: abCoupleId, user_id: bob.id },
-    ]);
+    // Alice·Bob 페어: use Alice's self-couple, move Bob into it
+    abCoupleId = await selfCoupleOf(alice.id);
+    await joinCouple(bob.id, abCoupleId);
 
-    // Charlie 솔로 페어 (외부 사용자)
-    const { data: cdCouple } = await admin
-      .from("couples")
-      .insert({ created_by: charlie.id })
-      .select()
-      .single();
-    cdCoupleId = cdCouple!.id;
-    await admin.from("couple_members").insert([
-      { couple_id: cdCoupleId, user_id: charlie.id },
-    ]);
+    // Charlie keeps his self-couple (외부 사용자)
+    cdCoupleId = await selfCoupleOf(charlie.id);
   });
 
   it("Alice가 pair chat 만들면 Bob도 보임", async () => {

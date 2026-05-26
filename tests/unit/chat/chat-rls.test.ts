@@ -20,6 +20,24 @@ async function signInAs(email: string) {
   return c;
 }
 
+async function selfCoupleOf(userId: string): Promise<string> {
+  const { data } = await admin
+    .from("couple_members")
+    .select("couple_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!data?.couple_id) throw new Error(`No self-couple found for ${userId}`);
+  return data.couple_id;
+}
+
+async function joinCouple(joinerUserId: string, targetCoupleId: string) {
+  const selfCouple = await selfCoupleOf(joinerUserId);
+  await admin.from("couples").delete().eq("id", selfCouple);
+  await admin
+    .from("couple_members")
+    .insert({ couple_id: targetCoupleId, user_id: joinerUserId });
+}
+
 describe("ai_chats RLS", () => {
   let aliceId: string, bobId: string, coupleId: string;
   const ts = Date.now();
@@ -30,13 +48,9 @@ describe("ai_chats RLS", () => {
     aliceId = await makeUser(aliceEmail);
     bobId = await makeUser(`chat-b-${ts}@example.com`);
     await makeUser(malloryEmail);
-    const { data: c } = await admin
-      .from("couples").insert({ created_by: aliceId }).select().single();
-    coupleId = c!.id;
-    await admin.from("couple_members").insert([
-      { couple_id: coupleId, user_id: aliceId },
-      { couple_id: coupleId, user_id: bobId },
-    ]);
+    // Use Alice's auto-created self-couple; move Bob into it
+    coupleId = await selfCoupleOf(aliceId);
+    await joinCouple(bobId, coupleId);
   });
 
   it("pair chat: partner can read", async () => {

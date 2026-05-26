@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createServiceClient } from "@supabase/supabase-js";
 
 export async function getCoupleForUser(userId: string) {
   const supabase = await createClient();
@@ -9,6 +10,30 @@ export async function getCoupleForUser(userId: string) {
     .maybeSingle();
   if (error) throw error;
   return data?.couple_id ?? null;
+}
+
+/**
+ * Returns the existing couple_id for a user, or creates a self-couple if none
+ * exists (safety net for pre-existing users / trigger gaps).
+ */
+export async function getOrCreateCoupleForUser(userId: string): Promise<string> {
+  const existing = await getCoupleForUser(userId);
+  if (existing) return existing;
+  const admin = createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } },
+  );
+  const { data: c, error } = await admin
+    .from("couples")
+    .insert({ created_by: userId })
+    .select("id")
+    .single();
+  if (error) throw error;
+  await admin
+    .from("couple_members")
+    .insert({ couple_id: c.id, user_id: userId });
+  return c.id as string;
 }
 
 export async function getPartner(coupleId: string, currentUserId: string) {

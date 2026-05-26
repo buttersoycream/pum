@@ -21,25 +21,31 @@ async function makeUser() {
   return data.user!.id;
 }
 
-async function createCoupleWithInvite(
+/** Returns the auto-created self-couple id for a user (created by trigger). */
+async function selfCoupleOf(userId: string): Promise<string> {
+  const { data } = await admin
+    .from("couple_members")
+    .select("couple_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!data?.couple_id) throw new Error(`No self-couple found for ${userId}`);
+  return data.couple_id;
+}
+
+/**
+ * Creates an invite token on a user's existing self-couple.
+ * With the trigger, every user already has a couple — no need to create one.
+ */
+async function createInviteForUser(
   creatorId: string,
   opts: { expiresInMs?: number; accepted?: boolean } = {},
 ) {
   const { expiresInMs = 72 * 3600 * 1000, accepted = false } = opts;
-  const { data: couple, error: cErr } = await admin
-    .from("couples")
-    .insert({ created_by: creatorId })
-    .select()
-    .single();
-  if (cErr) throw cErr;
-  const { error: mErr } = await admin
-    .from("couple_members")
-    .insert({ couple_id: couple.id, user_id: creatorId });
-  if (mErr) throw mErr;
+  const coupleId = await selfCoupleOf(creatorId);
   const token = generateInviteToken();
   const { error: iErr } = await admin.from("couple_invites").insert({
     token,
-    couple_id: couple.id,
+    couple_id: coupleId,
     invited_by: creatorId,
     expires_at: new Date(Date.now() + expiresInMs).toISOString(),
     ...(accepted
@@ -47,7 +53,7 @@ async function createCoupleWithInvite(
       : {}),
   });
   if (iErr) throw iErr;
-  return { coupleId: couple.id as string, token };
+  return { coupleId: coupleId as string, token };
 }
 
 async function coupleOf(userId: string) {
@@ -72,7 +78,7 @@ describe("acceptInvite", () => {
   it("joins the inviter's couple with a valid invite", async () => {
     const alice = await makeUser();
     const bob = await makeUser();
-    const { coupleId, token } = await createCoupleWithInvite(alice);
+    const { coupleId, token } = await createInviteForUser(alice);
 
     const r = await acceptInvite(admin, bob, token);
 
@@ -90,39 +96,41 @@ describe("acceptInvite", () => {
   it("auto-cleans an empty self-couple, then joins the real invite", async () => {
     const alice = await makeUser();
     const bob = await makeUser();
-    const bobOwn = await createCoupleWithInvite(bob);
-    const { coupleId: aliceCouple, token } =
-      await createCoupleWithInvite(alice);
+    const bobOwnCoupleId = await selfCoupleOf(bob);
+    const { coupleId: aliceCouple, token } = await createInviteForUser(alice);
 
     const r = await acceptInvite(admin, bob, token);
 
     expect(r.error).toBeUndefined();
     expect(r.coupleId).toBe(aliceCouple);
     expect(await coupleOf(bob)).toBe(aliceCouple);
-    expect(await coupleExists(bobOwn.coupleId)).toBe(false);
+    expect(await coupleExists(bobOwnCoupleId)).toBe(false);
   });
 
   it("blocks when already in a real two-person couple", async () => {
     const alice = await makeUser();
     const bob = await makeUser();
     const carol = await makeUser();
-    const real = await createCoupleWithInvite(carol);
-    await admin
-      .from("couple_members")
-      .insert({ couple_id: real.coupleId, user_id: bob });
-    const { token } = await createCoupleWithInvite(alice);
+    // Put bob into carol's couple (making a real 2-person couple)
+    const carolCoupleId = await selfCoupleOf(carol);
+    const bobSelfCoupleId = await selfCoupleOf(bob);
+    // Remove bob from self-couple, join carol's
+    await admin.from("couples").delete().eq("id", bobSelfCoupleId);
+    await admin.from("couple_members").insert({ couple_id: carolCoupleId, user_id: bob });
+
+    const { token } = await createInviteForUser(alice);
 
     const r = await acceptInvite(admin, bob, token);
 
     expect(r.error).toBeTruthy();
-    expect(await coupleExists(real.coupleId)).toBe(true);
-    expect(await coupleOf(bob)).toBe(real.coupleId);
+    expect(await coupleExists(carolCoupleId)).toBe(true);
+    expect(await coupleOf(bob)).toBe(carolCoupleId);
   });
 
   it("rejects an expired invite", async () => {
     const alice = await makeUser();
     const bob = await makeUser();
-    const { token } = await createCoupleWithInvite(alice, {
+    const { token } = await createInviteForUser(alice, {
       expiresInMs: -1000,
     });
 
@@ -134,7 +142,7 @@ describe("acceptInvite", () => {
   it("rejects an already-used invite", async () => {
     const alice = await makeUser();
     const bob = await makeUser();
-    const { token } = await createCoupleWithInvite(alice, { accepted: true });
+    const { token } = await createInviteForUser(alice, { accepted: true });
 
     const r = await acceptInvite(admin, bob, token);
 
@@ -143,7 +151,7 @@ describe("acceptInvite", () => {
 
   it("rejects accepting your own invite", async () => {
     const alice = await makeUser();
-    const { token } = await createCoupleWithInvite(alice);
+    const { token } = await createInviteForUser(alice);
 
     const r = await acceptInvite(admin, alice, token);
 

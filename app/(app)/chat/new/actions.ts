@@ -3,7 +3,7 @@
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth/current-user";
-import { getCoupleForUser } from "@/lib/couple/queries";
+import { getOrCreateCoupleForUser } from "@/lib/couple/queries";
 import { createChat } from "@/lib/chat/mutations";
 
 const admin = () =>
@@ -13,16 +13,30 @@ const admin = () =>
     { auth: { persistSession: false } },
   );
 
-export async function createChatAction(formData: FormData) {
+export async function createChatAction(
+  formData: FormData,
+): Promise<{ error: string } | void> {
   const user = await requireUser();
   const visibility =
     formData.get("visibility") === "private" ? "private" : "pair";
-  const coupleId = await getCoupleForUser(user.id);
-  if (!coupleId) return { error: "먼저 배우자와 연결해주세요." };
-  const chat = await createChat(admin(), {
-    coupleId,
-    ownerUserId: user.id,
-    visibility,
-  });
-  redirect(`/chat/${chat.id}`);
+  try {
+    const coupleId = await getOrCreateCoupleForUser(user.id);
+    const chat = await createChat(admin(), {
+      coupleId,
+      ownerUserId: user.id,
+      visibility,
+    });
+    redirect(`/chat/${chat.id}`);
+  } catch (e: unknown) {
+    // Re-throw Next.js redirect — it must not be caught here
+    if (
+      e instanceof Error &&
+      (e as { digest?: string }).digest?.startsWith("NEXT_REDIRECT")
+    ) {
+      throw e;
+    }
+    return {
+      error: e instanceof Error ? e.message : "대화를 시작할 수 없습니다.",
+    };
+  }
 }

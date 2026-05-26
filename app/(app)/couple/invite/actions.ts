@@ -1,19 +1,19 @@
 "use server";
 
 import { requireUser } from "@/lib/auth/current-user";
-import { getCoupleForUser } from "@/lib/couple/queries";
-import { createCoupleAndInvite } from "@/lib/couple/mutations";
+import { getOrCreateCoupleForUser } from "@/lib/couple/queries";
+import { createInviteForCouple } from "@/lib/couple/mutations";
 
 export async function createInviteAction(): Promise<{
   token?: string;
   error?: string;
 }> {
   const user = await requireUser();
-  const existing = await getCoupleForUser(user.id);
-  if (existing) return { error: "이미 페어가 있습니다." };
-
+  // With self-couple, every user already has a couple_id. We create (or reuse)
+  // that couple and generate a fresh invite token pointing to it.
   try {
-    const { token } = await createCoupleAndInvite(user.id);
+    const coupleId = await getOrCreateCoupleForUser(user.id);
+    const { token } = await createInviteForCouple(coupleId, user.id);
     return { token };
   } catch (e: unknown) {
     return { error: e instanceof Error ? e.message : "초대 생성 실패" };

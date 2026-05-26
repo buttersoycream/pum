@@ -31,6 +31,29 @@ async function signInAs(email: string) {
   return client;
 }
 
+/** Returns the auto-created self-couple id for a user (created by trigger). */
+async function selfCoupleOf(userId: string): Promise<string> {
+  const { data } = await admin
+    .from("couple_members")
+    .select("couple_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!data?.couple_id) throw new Error(`No self-couple found for ${userId}`);
+  return data.couple_id;
+}
+
+/**
+ * Moves `joinerUserId` from their self-couple into `targetCoupleId`.
+ * Deletes their self-couple (CASCADE removes the member row) then inserts.
+ */
+async function joinCouple(joinerUserId: string, targetCoupleId: string) {
+  const selfCouple = await selfCoupleOf(joinerUserId);
+  await admin.from("couples").delete().eq("id", selfCouple);
+  await admin
+    .from("couple_members")
+    .insert({ couple_id: targetCoupleId, user_id: joinerUserId });
+}
+
 describe("Couple RLS isolation", () => {
   let alice: { id: string; email: string };
   let bob: { id: string; email: string };
@@ -43,18 +66,11 @@ describe("Couple RLS isolation", () => {
     bob = await makeUser(`bob-${ts}@example.com`);
     mallory = await makeUser(`mallory-${ts}@example.com`);
 
-    const { data: couple, error: cErr } = await admin
-      .from("couples")
-      .insert({ created_by: alice.id })
-      .select()
-      .single();
-    if (cErr) throw cErr;
-    coupleId = couple.id;
-
-    await admin.from("couple_members").insert([
-      { couple_id: coupleId, user_id: alice.id },
-      { couple_id: coupleId, user_id: bob.id },
-    ]);
+    // Use Alice's auto-created self-couple as the shared couple
+    coupleId = await selfCoupleOf(alice.id);
+    // Move Bob into Alice's couple (delete Bob's self-couple first)
+    await joinCouple(bob.id, coupleId);
+    // Mallory keeps her own self-couple (non-member)
   });
 
   it("Alice reads her own couple", async () => {
@@ -90,14 +106,10 @@ describe("Couple RLS isolation", () => {
 
   it("Mallory cannot insert Bob as a member of her own couple", async () => {
     const c = await signInAs(mallory.email);
-    const { data: malloryCouple } = await c
-      .from("couples")
-      .insert({ created_by: mallory.id })
-      .select()
-      .single();
+    const malloryCoupleId = await selfCoupleOf(mallory.id);
 
     const { error } = await c.from("couple_members").insert({
-      couple_id: malloryCouple!.id,
+      couple_id: malloryCoupleId,
       user_id: bob.id,
     });
     expect(error).not.toBeNull();

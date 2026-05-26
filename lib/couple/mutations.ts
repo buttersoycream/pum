@@ -32,3 +32,26 @@ export async function createCoupleAndInvite(
 
   return { token, coupleId: couple.id };
 }
+
+/**
+ * Creates an invite token for an existing couple (used when the inviter
+ * already has a self-couple and wants to invite a partner).
+ */
+export async function createInviteForCouple(
+  coupleId: string,
+  invitedBy: string,
+): Promise<{ token: string; coupleId: string }> {
+  const supabase = await createClient();
+  const token = generateInviteToken();
+  const expiresAt = new Date(
+    Date.now() + INVITE_EXPIRY_HOURS * 60 * 60 * 1000,
+  );
+  const { error: iErr } = await supabase.from("couple_invites").insert({
+    token,
+    couple_id: coupleId,
+    invited_by: invitedBy,
+    expires_at: expiresAt.toISOString(),
+  });
+  if (iErr) throw iErr;
+  return { token, coupleId };
+}

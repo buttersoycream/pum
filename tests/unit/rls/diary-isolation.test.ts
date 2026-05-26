@@ -31,6 +31,24 @@ async function signInAs(email: string) {
   return client;
 }
 
+async function selfCoupleOf(userId: string): Promise<string> {
+  const { data } = await admin
+    .from("couple_members")
+    .select("couple_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!data?.couple_id) throw new Error(`No self-couple found for ${userId}`);
+  return data.couple_id;
+}
+
+async function joinCouple(joinerUserId: string, targetCoupleId: string) {
+  const selfCouple = await selfCoupleOf(joinerUserId);
+  await admin.from("couples").delete().eq("id", selfCouple);
+  await admin
+    .from("couple_members")
+    .insert({ couple_id: targetCoupleId, user_id: joinerUserId });
+}
+
 describe("diary_entries RLS isolation", () => {
   let alice: { id: string; email: string };
   let bob: { id: string; email: string };
@@ -43,16 +61,11 @@ describe("diary_entries RLS isolation", () => {
     bob = await makeUser(`bob-diary-${ts}@example.com`);
     mallory = await makeUser(`mallory-diary-${ts}@example.com`);
 
-    const { data: couple } = await admin
-      .from("couples")
-      .insert({ created_by: alice.id })
-      .select()
-      .single();
-    coupleId = couple!.id;
-    await admin.from("couple_members").insert([
-      { couple_id: coupleId, user_id: alice.id },
-      { couple_id: coupleId, user_id: bob.id },
-    ]);
+    // Use Alice's auto-created self-couple as the shared couple
+    coupleId = await selfCoupleOf(alice.id);
+    // Move Bob into Alice's couple
+    await joinCouple(bob.id, coupleId);
+    // Mallory keeps her own self-couple (non-member of Alice's couple)
   });
 
   it("Alice pair 일기 → Bob 보임", async () => {
@@ -122,6 +135,7 @@ describe("diary_entries RLS isolation", () => {
       .eq("id", entry!.id);
     // RLS update policy는 author_user_id=auth.uid()만 허용.
     // policy 위반 시 supabase는 보통 에러 또는 0 row 갱신.
+    void error;
     const alcRecheck = await alc
       .from("diary_entries")
       .select()
