@@ -12,7 +12,7 @@ const TABS = [
 export function BottomTabs() {
   const path = usePathname();
   return (
-    <nav className="bg-background/95 fixed inset-x-0 bottom-0 z-10 grid grid-cols-4 border-t backdrop-blur sm:mx-auto sm:max-w-md">
+    <nav aria-label="메인 메뉴" className="bg-background/95 fixed inset-x-0 bottom-0 z-10 grid grid-cols-4 border-t backdrop-blur sm:mx-auto sm:max-w-md">
       {TABS.map((t) => {
         const active = path === t.href || path.startsWith(t.href + "/");
         return (

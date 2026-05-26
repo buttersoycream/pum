@@ -13,12 +13,13 @@ async function signupToDashboard(page: Page, email: string) {
   await page.goto("/signup");
   await page.waitForLoadState("networkidle");
   await signupViaForm(page, email);
-  await page.waitForURL("**/dashboard", { timeout: 15_000 });
+  await page.waitForURL("**/home", { timeout: 15_000 });
 }
 
 async function createInviteUrl(page: Page): Promise<string> {
-  await page.click("text=배우자 초대하기");
-  await page.waitForURL("**/couple/invite");
+  // Navigate directly to the invite page (home auto-creates self-couple,
+  // so dashboard invite button is conditionally hidden for coupled users)
+  await page.goto("/couple/invite");
   await page.click("text=초대 링크 만들기");
   return page.locator('[data-testid="invite-url"]').innerText();
 }

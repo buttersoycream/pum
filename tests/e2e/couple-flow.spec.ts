@@ -11,7 +11,7 @@ async function signup(page: Page, email: string) {
   await page.fill("input[name=email]", email);
   await page.fill("input[name=password]", PASS);
   await page.click('button[type=submit]');
-  await page.waitForURL("**/dashboard", { timeout: 15_000 });
+  await page.waitForURL("**/home", { timeout: 15_000 });
 }
 
 test("Full couple flow: Alice invites, Bob accepts, both see partner", async ({
@@ -21,9 +21,9 @@ test("Full couple flow: Alice invites, Bob accepts, both see partner", async ({
   const aliceCtx: BrowserContext = await browser.newContext();
   const alice: Page = await aliceCtx.newPage();
   await signup(alice, ALICE);
-  await expect(alice.locator("h1")).toHaveText("환영합니다");
-  await alice.click("text=배우자 초대하기");
-  await alice.waitForURL("**/couple/invite");
+  // Navigate directly to the invite page (home auto-creates self-couple,
+  // so dashboard "배우자 초대하기" button is conditionally hidden)
+  await alice.goto("/couple/invite");
   await alice.click("text=초대 링크 만들기");
   const inviteUrl = await alice.locator('[data-testid="invite-url"]').innerText();
   expect(inviteUrl).toContain("/couple/accept/");

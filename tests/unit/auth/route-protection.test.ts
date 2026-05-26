@@ -22,6 +22,13 @@ describe("isProtectedPath", () => {
     expect(isProtectedPath("/login")).toBe(false);
     expect(isProtectedPath("/signup")).toBe(false);
   });
+
+  it("protects /home, /articles, and /me (magazine routes)", () => {
+    expect(isProtectedPath("/home")).toBe(true);
+    expect(isProtectedPath("/articles")).toBe(true);
+    expect(isProtectedPath("/me")).toBe(true);
+    expect(isProtectedPath("/home/x")).toBe(true);
+  });
 });
 
 describe("isAuthPath", () => {

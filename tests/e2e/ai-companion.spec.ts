@@ -10,19 +10,18 @@ async function signup(page: Page, email: string) {
   await page.fill("input[name=email]", email);
   await page.fill("input[name=password]", PASS);
   await page.click("button[type=submit]");
-  await page.waitForURL("**/dashboard", { timeout: 15_000 });
+  await page.waitForURL("**/home", { timeout: 15_000 });
 }
 
 /**
- * Creates a solo couple (invite creator is immediately added to couple_members
- * so getCoupleForUser returns a coupleId — sufficient for createChatAction).
+ * Creates a solo couple via the self-couple trigger (getOrCreateCoupleForUser
+ * runs on /home load). The user is already in couple_members after signup,
+ * so getCoupleForUser returns a coupleId — sufficient for createChatAction.
  */
 async function soloCouple(page: Page, email: string) {
   await signup(page, email);
-  await page.click("text=배우자 초대하기");
-  await page.waitForURL("**/couple/invite");
-  await page.click("text=초대 링크 만들기");
-  await page.locator('[data-testid="invite-url"]').waitFor();
+  // /home calls getOrCreateCoupleForUser — self-couple is created on load.
+  await page.waitForLoadState("networkidle");
 }
 
 test("physical emergency: escalation, no AI call (key not required)", async ({

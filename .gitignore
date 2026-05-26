@@ -46,6 +46,10 @@ next-env.d.ts
 
 # test artifacts
 test-results/
+.playwright-mcp/
+*.png
 
 # Claude local settings (personal)
 .claude/settings.local.json
+
+.vercel
