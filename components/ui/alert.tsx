@@ -22,6 +22,7 @@ const alertVariants = cva(
 function Alert({
   className,
   variant,
+  children,
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
   return (
@@ -30,7 +31,12 @@ function Alert({
       role="alert"
       className={cn(alertVariants({ variant }), className)}
       {...props}
-    />
+    >
+      {/* 내용을 항상 두 번째(내용) 칸에 배치 — 텍스트를 직접 넣어도
+          0폭 아이콘 칸에 떨어져 세로로 쪼개지지 않도록. AlertTitle/Description
+          을 직접 쓰는 패턴이 생기면 이 래핑을 재검토. */}
+      <AlertDescription>{children}</AlertDescription>
+    </div>
   )
 }
 

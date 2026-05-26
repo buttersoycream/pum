@@ -17,14 +17,14 @@ export async function signupAction(formData: FormData) {
     return { error: "이메일과 비밀번호를 입력해주세요." };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
-    },
-  });
+  const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) return { error: error.message };
+
+  // 이메일 확인이 켜져 있으면 세션이 없다 → 자동 로그인 대신 확인 메일을 안내.
+  // (확인 링크는 /auth/confirm 가 처리; redirect 는 이메일 템플릿의 next 가 담당)
+  if (!data.session) {
+    return { needsConfirmation: true as const };
+  }
 
   redirect(destination(formData));
 }

@@ -16,11 +16,40 @@ export default function SignupPage({
 }) {
   const { redirect_to } = use(searchParams);
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
   const [pending, startTransition] = useTransition();
 
   const loginHref = redirect_to
     ? `/login?redirect_to=${encodeURIComponent(redirect_to)}`
     : "/login";
+
+  if (sent) {
+    return (
+      <Card>
+        <CardHeader>
+          <h1 className="text-2xl font-semibold">메일을 확인해주세요</h1>
+          <p className="text-muted-foreground text-sm">
+            가입을 마치려면 이메일 인증이 필요해요.
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Alert>
+            방금 입력하신 이메일로 <strong>확인 링크</strong>를 보냈어요. 메일함을
+            열어 링크를 누르면 가입이 완료됩니다.
+          </Alert>
+          <p className="text-muted-foreground text-sm">
+            메일이 안 보이면 <strong>스팸함</strong>도 확인해주세요. 도착까지 몇
+            분 걸릴 수 있어요.
+          </p>
+        </CardContent>
+        <CardFooter>
+          <Button asChild variant="outline" className="w-full">
+            <Link href={loginHref}>로그인 화면으로</Link>
+          </Button>
+        </CardFooter>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -36,6 +65,7 @@ export default function SignupPage({
             if (redirect_to) fd.set("redirect_to", redirect_to);
             const r = await signupAction(fd);
             if (r?.error) setError(r.error);
+            else if (r?.needsConfirmation) setSent(true);
           })
         }
       >

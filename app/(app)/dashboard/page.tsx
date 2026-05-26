@@ -25,6 +25,22 @@ export default async function DashboardPage() {
 
       <PartnerCard hasPartner={!!partnerEmail} partnerEmail={partnerEmail} />
 
+      {coupleId && (
+        <Card>
+          <CardHeader>
+            <h2 className="font-semibold">AI 동반자와 대화하기</h2>
+            <p className="text-muted-foreground text-sm">
+              궁금한 것도, 힘든 마음도 편하게 이야기해보세요. 언제든 곁에 있어요.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <Button asChild>
+              <Link href="/chat">대화 시작하기</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {!coupleId && (
         <div className="grid gap-4 sm:grid-cols-2">
           <Card>
