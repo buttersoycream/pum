@@ -19,6 +19,9 @@ const DIR = path.join(process.cwd(), "content/articles");
 function read(file: string): Article {
   const raw = fs.readFileSync(path.join(DIR, file), "utf8");
   const { data, content } = matter(raw);
+  if (!data.slug || !data.title) {
+    throw new Error(`[articles] ${file} is missing required frontmatter (slug, title)`);
+  }
   return {
     slug: data.slug,
     title: data.title,
@@ -36,7 +39,7 @@ export function listArticles(): Article[] {
     .readdirSync(DIR)
     .filter((f) => f.endsWith(".md"))
     .map(read)
-    .filter((a) => a.published !== false)
+    .filter((a) => a.published)
     .sort((a, b) => a.order - b.order);
 }
 
@@ -44,7 +47,10 @@ export function getArticle(slug: string): Article | null {
   return listArticles().find((a) => a.slug === slug) ?? null;
 }
 
-/** stage 매칭(cycleStages 비었으면 전체 대상). */
+/**
+ * stage 매칭. cycleStages 비었으면 전체 단계 대상.
+ * stage=null (미설정) → 단계 무관 글만 반환.
+ */
 export function articlesForStage(stage: string | null): Article[] {
   return listArticles().filter(
     (a) =>
