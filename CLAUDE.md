@@ -188,6 +188,17 @@ user 질문: "단기간 실제로 돈이 될 만한 프로젝트?" → teum 5개
 
 ---
 
+## 5b. 코딩 규율 — Karpathy 4원칙 (always-on 브레이크)
+
+> 출처: [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (Karpathy의 LLM 코딩 고질병 관찰 → 65줄 CLAUDE.md). 핵심: **"AI는 코드를 못 짜는 게 아니라 너무 잘·빨리·자신있게 짠다 — 필요한 건 브레이크."** 코드·subagent 작업 시 항상 적용 (superpowers brainstorming/TDD와 시너지).
+
+1. **Think Before Coding** — 추측 X. 여러 해석 가능하면 멋대로 고르지 말고 **선택지 + 트레이드오프를 제시**. 더 간단한 방법 있으면 말하기. 헷갈리면 멈추고 되묻기. (예: "로그인 추가" → JWT 200줄 멋대로 X → "JWT/세션/OAuth 중?" 묻기)
+2. **Simplicity First** — 문제 해결 **최소 코드만**. 요청 외 기능·불필요한 추상화·유연성·설정 X. 200줄→50줄 가능하면 다시. "시니어가 복잡하다 할 것 같으면" 단순화.
+3. **Surgical Changes** — 시킨 것·내가 짠 것만 수정. **변경된 모든 줄이 요청에 직접 연결**돼야 함. 주변 코드·주석·서식 손대지 말 것(기존 스타일 유지). 무관한 미사용 코드 보이면 **삭제 말고 보고**.
+4. **Goal-Driven Execution** ⭐ — 과제를 **검증 가능한 목표**로 전환. "버그 고쳐" X → "버그 재현 테스트 작성 → 통과시켜". 다단계면 간략 계획 + **각 단계 검증**. 검증 단계 필수. (pum은 Vitest 단위 + Playwright E2E 이미 있음 — 적극 활용)
+
+---
+
 ## 6. 역할 분담
 
 | 영역 | user | claude |
